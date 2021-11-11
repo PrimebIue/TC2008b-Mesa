@@ -1,5 +1,7 @@
 # Reporte  Roomba
 
+Jorge Cabiedes Acosta - A01024053
+
 ## Opciones de mejora
 
 - Hacer que los roombas identifiquen celdas sucias
