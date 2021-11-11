@@ -14,7 +14,7 @@ Al final, cuando solo quedan unas pocas celdas sucias es cuando más tiempo se t
 
 <img src='https://github.com/PrimebIue/TC2008b-Mesa/blob/main/assets/Floor_Chart.png' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-Por cada agente que se agrega, el promedio de tiempo que tardan los agentes en limpiar todo el piso en teoría se debe de disminuir a la mitad, pero dado que completamente aleatorio el movimiento de los agentes hay una varianza de tiempo muy elevada. Por ejemplo, en la siguiente tabla, podemos ver que 6 agentes tardaron más que 5 agentes.
+Por cada agente que se agrega, el promedio de tiempo que tardan los agentes en limpiar todo el piso en teoría se debe de disminuir a la mitad, pero dado a que es completamente aleatorio el movimiento de los agentes hay una varianza de tiempo muy elevada. Por ejemplo, en la siguiente tabla, podemos ver que 6 agentes tardaron más que 5 agentes.
 
    | Agentes      | Steps     | Grid     |Densidad    |
    | ------------- | -------- | -------- |-------- |
