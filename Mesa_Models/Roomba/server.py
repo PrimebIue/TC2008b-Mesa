@@ -45,13 +45,16 @@ grid = CanvasGrid(roombaPortrayal, 10, 10, 500, 500)
 moves_chart = ChartModule(
     [{"Label": "Moves", "Color": "#000000"}]
 )
+floor_chart = ChartModule(
+    [{"Label": label, "Color": color} for (label, color) in COLORS.items()]
+)
 
 floor_pie_chart = PieChartModule(
     [{"Label": label, "Color": color} for (label, color) in COLORS.items()]
 )
 
 server = ModularServer(RoombaModel,
-                       [grid, moves_chart, floor_pie_chart],
+                       [grid, moves_chart, floor_pie_chart, floor_chart],
                        "Roomba Cleaning",
                        {"N": UserSettableParameter("number", "Roomba Number: ", value=4), "ancho": 10, "alto": 10,
                         "percentage": UserSettableParameter("slider", "Floor Percentage", 0.6, 0.01, 1.0, 0.1),
