@@ -21,7 +21,9 @@ class Roomba(Agent):
         freeSpaces = []
         for pos in possible_steps:
             var = True
-            if self.model.grid.get_cell_list_contents(pos):
+            if pos == self.model.grid.out_of_bounds(pos):
+                var = False
+            elif self.model.grid.get_cell_list_contents(pos):
                 for agent in self.model.grid.get_cell_list_contents(pos):
                     if isinstance(agent, ObstacleAgent):
                         var = False
