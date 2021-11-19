@@ -24,4 +24,3 @@ server = ModularServer(RandomModel,
                        {"N": 5, "ancho": 10, "alto": 10})
 server.port = 8521  # The default
 server.launch()
-
