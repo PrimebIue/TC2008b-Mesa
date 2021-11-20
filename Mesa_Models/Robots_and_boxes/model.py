@@ -12,18 +12,20 @@ class RobotsAndBoxes(Model):
         self.schedule = SimultaneousActivation(self)
         self.grid = MultiGrid(width, height, False)
         self.agentN = agentN
+        self.m = [[1 for i in range(width)] for j in range(height)]
 
         objectivePos = self.grid.find_empty()
-        print(objectivePos)
 
         # Add Objective
         objective = Objective(1000, self)
+        self.m[objectivePos[0]][objectivePos[1]]
         self.grid.place_agent(objective, objectivePos)
         self.schedule.add(objective)
 
         # Add the Robot
         for i in range(self.agentN):
             a = Robot(i, self)
+            a.objPos = objectivePos
             self.grid.place_agent(a, objectivePos)
             self.schedule.add(a)
 
@@ -36,6 +38,7 @@ class RobotsAndBoxes(Model):
                     self.grid.place_agent(newBox, (x, y))
                     self.schedule.add(newBox)
                     id += 1
+                    self.m[y][x] = float('inf')
 
     def step(self):
         self.schedule.step()

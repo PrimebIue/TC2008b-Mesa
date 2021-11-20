@@ -1,20 +1,23 @@
 from mesa import Agent
 
+from pathUtils import findPath
+
 
 class Robot(Agent):
 
     def __init__(self, uniqueId, model):
         super().__init__(uniqueId, model)
         self.direction = 0
+        self.isEmpty = True
+        self.currBox = None
+        self.objPos = 0
 
-    def move(self):
+    def moveEmpty(self):
         possibleSteps = self.model.grid.get_neighborhood(
             self.pos,
             moore=False,
             include_center=False
         )
-
-        print("pos: ")
 
         freeSpaces = []
         for pos in possibleSteps:
@@ -23,19 +26,52 @@ class Robot(Agent):
                 for agent in self.model.grid.get_cell_list_contents(pos):
                     if isinstance(agent, Robot):
                         var = False
-                    # TODO - Check if box if Robot has box
             freeSpaces.append(var)
 
         self.direction = (self.random.randint(0, len(freeSpaces)-1))
-        print("free: ", freeSpaces)
-        print(self.direction)
 
         if freeSpaces[self.direction]:
-            self.model.grid.move_agent(self, possibleSteps[self.direction])
-            print(possibleSteps[self.direction])
+            coord = possibleSteps[self.direction]
+            self.model.m[self.pos[1]][self.pos[0]] = 1
+            self.model.grid.move_agent(self, coord)
+            if self.model.m[coord[1]][coord[0]] != 2:
+                self.model.m[coord[1]][coord[0]] = float('inf')
+
+    def moveFull(self):
+        path = findPath(self.model.m.copy(),
+                        self.pos[0], self.pos[1], self.objPos[0], self.objPos[1])
+        if path != -1 and len(path) > 1:
+            # if self.model.grid.get_cell_list_contents((path[1].x, path[1].y))
+            self.model.m[self.pos[1]][self.pos[0]] = 1
+            self.model.grid.move_agent(self, (path[1].x, path[1].y))
+            self.model.grid.move_agent(self.currBox, (path[1].x, path[1].y))
+            if self.model.m[path[1].y][path[1].x] != 2:
+                self.model.m[path[1].y][path[1].x] = float('inf')
+        return 0
+
+    def getBox(self):
+        for agent in self.model.grid.get_cell_list_contents(self.pos):
+            if isinstance(agent, Box):
+                self.isEmpty = False
+                self.currBox = agent
+
+    def checkObj(self):
+        for agent in self.model.grid.get_cell_list_contents(self.pos):
+            if isinstance(agent, Objective):
+                self.isEmpty = True
+                self.currBox = None
 
     def step(self):
-        self.move()
+        if not self.isEmpty:
+            pass
+        else:
+            self.moveEmpty()
+            self.getBox()
+
+    def advance(self):
+        if not self.isEmpty:
+            self.moveFull()
+            self.checkObj()
 
 
 class Box(Agent):

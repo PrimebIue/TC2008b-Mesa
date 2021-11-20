@@ -46,7 +46,7 @@ grid = CanvasGrid(robotsAndBoxesPortrayal, 10, 10, 500, 500)
 server = ModularServer(RobotsAndBoxes,
                        [grid],
                        "Robots and Boxes",
-                       {"agentN": UserSettableParameter("number", "Robot: ", value=4),
+                       {"agentN": UserSettableParameter("number", "Robot: ", value=1),
                         "density": UserSettableParameter("slider", "Box Density", 0.6, 0.01, 1.0, 0.1),
                         "height": 10,
                         "width": 10})
