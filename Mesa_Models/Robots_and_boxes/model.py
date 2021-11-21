@@ -36,9 +36,18 @@ class RobotsAndBoxes(Model):
                 if self.random.random() < density:
                     newBox = Box(id+2000, self)
                     self.grid.place_agent(newBox, (x, y))
+                    newBox.objPos = objectivePos
                     self.schedule.add(newBox)
                     id += 1
                     self.m[y][x] = float('inf')
+        self.running = True
 
     def step(self):
+        count = 0
+        for agent in self.schedule.agents:
+            if isinstance(agent, Box):
+                count += 1
+        if count < 1:
+            self.running = False
+
         self.schedule.step()

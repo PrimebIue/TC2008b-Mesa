@@ -38,6 +38,8 @@ def getPath(node, path=[]):
 # destination cell (N-1, N-1)
 def findPath(matrix, x, y, destX, destY):
 
+    print("Path calc...")
+
     # base case
     if not matrix or not len(matrix):
         return
@@ -70,16 +72,12 @@ def findPath(matrix, x, y, destX, destY):
             getPath(curr, path)
             return path
 
-        # value of the current cell
-        n = 1
-        print("n: ", n)
-
         # check all four possible movements from the current cell
         # and recur for each valid movement
         for k in range(len(row)):
             # get next position coordinates using the value of the current cell
-            x = i + row[k] * n
-            y = j + col[k] * n
+            x = i + row[k]
+            y = j + col[k]
 
             # check if it is possible to go to the next position
             # from the current position
