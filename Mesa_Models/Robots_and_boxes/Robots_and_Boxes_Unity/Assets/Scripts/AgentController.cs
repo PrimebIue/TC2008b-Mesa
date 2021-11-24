@@ -9,6 +9,11 @@ public class RobotAgent {
     public List<Vector3> positions;
 }
 
+public class RobotData {
+    public Vector3 position;
+    public int uniqueID;
+}
+
 public class BoxAgent {
     public List<Vector3> positions;
     public int numBoxes;
@@ -43,10 +48,14 @@ public class AgentController : MonoBehaviour
     BoxAgent boxAgents;
     ObjAgent objAgent;
 
+    // Smooth Transitions
+    List<Vector3> oldPositions;
+    List<Vector3> newPositions;
+
     bool hold = false;
     bool first = true;
 
-    float updateTime = 5.0f;
+    float timer, dt;
     
     // Start is called before the first frame update
     void Start()
@@ -57,6 +66,9 @@ public class AgentController : MonoBehaviour
 
         robots = new GameObject[numAgents];
         objective = new GameObject();
+
+        oldPositions = new List<Vector3>();
+        newPositions = new List<Vector3>();
 
         objective = Instantiate(objPrefab, Vector3.zero, Quaternion.identity);
 
@@ -70,15 +82,28 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float t = timer/updateDelay;
 
-        if (updateTime > updateDelay) {
-            updateTime = 0;
+        dt = t * t * (3f - 2f*t);
+
+        if (timer > updateDelay) {
+
+            timer = 0;
             hold = true;
             StartCoroutine(UpdateSimulation());
         }
 
         if (!hold) {
-            updateTime += Time.deltaTime;
+            for (int s = 0; s < robots.Length; s++) {
+                Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
+                robots[s].transform.localPosition = interpolated;
+
+                Vector3 dir = oldPositions[s] - newPositions[s];
+                robots[s].transform.rotation = Quaternion.LookRotation(dir);
+            }
+
+
+            timer += Time.deltaTime;
         }
     }
 
@@ -126,6 +151,18 @@ public class AgentController : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success) {
             Debug.Log(www.downloadHandler.text);
             robotAgents = JsonUtility.FromJson<RobotAgent>(www.downloadHandler.text);
+
+            oldPositions = new List<Vector3>(newPositions);
+
+            newPositions.Clear();
+
+            foreach(Vector3 v in robotAgents.positions)
+            {
+                newPositions.Add(v);
+                if (first)
+                    oldPositions.Add(v);
+            }
+
             yield return GetBoxesData();
         } else {
             Debug.Log(www.error);
