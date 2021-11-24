@@ -34,14 +34,18 @@ def initModel():
 def getAgents():
     global robotsModel
 
+    robots = []
     robotPositions = []
 
     for (a, x, z) in robotsModel.grid.coord_iter():
         for b in a:
             if isinstance(b, Robot):
-                robotPositions.append({"x": x, "y": 0, "z": z})
+                robots.append(b)
 
-    print("Robots:", len(robotPositions))
+    robots.sort()
+    for robot in robots:
+        robotPositions.append({"x": robot.pos[0], "y": 0, "z": robot.pos[1]})
+
     return jsonify({'positions': robotPositions})
 
 
@@ -51,12 +55,17 @@ def getBoxes():
 
     numBoxes = 0
     boxPositions = []
+    boxes = []
 
     for (a, x, z) in robotsModel.grid.coord_iter():
         for b in a:
             if isinstance(b, Box):
                 numBoxes += 1
-                boxPositions.append({"x": x, "y": 0, "z": z})
+                boxes.append(b)
+
+    boxes.sort()
+    for box in boxes:
+        boxPositions.append({"x": box.pos[0], "y": 0, "z": box.pos[1]})
 
     return jsonify({'positions': boxPositions, "numBoxes": numBoxes})
 

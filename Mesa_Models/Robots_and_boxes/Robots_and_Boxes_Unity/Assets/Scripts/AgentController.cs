@@ -42,15 +42,17 @@ public class AgentController : MonoBehaviour
     [SerializeField] GameObject objPrefab;
 
     GameObject[] robots;
-    GameObject[] boxes;
+    List<GameObject> boxes;
     GameObject objective;
     RobotAgent robotAgents;
     BoxAgent boxAgents;
     ObjAgent objAgent;
 
     // Smooth Transitions
-    List<Vector3> oldPositions;
-    List<Vector3> newPositions;
+    List<Vector3> oldPositionsRobots;
+    List<Vector3> newPositionsRobots;
+    List<Vector3> oldPositionsBoxes;
+    List<Vector3> newPositionsBoxes;
 
     bool hold = false;
     bool first = true;
@@ -66,15 +68,19 @@ public class AgentController : MonoBehaviour
 
         robots = new GameObject[numAgents];
         objective = new GameObject();
+        boxes = new List<GameObject>();
 
-        oldPositions = new List<Vector3>();
-        newPositions = new List<Vector3>();
+        oldPositionsRobots = new List<Vector3>();
+        newPositionsRobots = new List<Vector3>();
+        oldPositionsBoxes = new List<Vector3>();
+        newPositionsBoxes = new List<Vector3>();
 
         objective = Instantiate(objPrefab, Vector3.zero, Quaternion.identity);
 
         for (int i = 0; i < numAgents; i++) {
             robots[i] = Instantiate(robotPrefab, Vector3.zero, Quaternion.identity);
         }
+
 
         StartCoroutine(SendConfiguration()); 
     }
@@ -95,13 +101,22 @@ public class AgentController : MonoBehaviour
 
         if (!hold) {
             for (int s = 0; s < robots.Length; s++) {
-                Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
+                Vector3 interpolated = Vector3.Lerp(oldPositionsRobots[s], newPositionsRobots[s], dt);
                 robots[s].transform.localPosition = interpolated;
 
-                Vector3 dir = oldPositions[s] - newPositions[s];
+                Vector3 dir = oldPositionsRobots[s] - newPositionsRobots[s];
                 robots[s].transform.rotation = Quaternion.LookRotation(dir);
             }
+            for (int s = 0; s < boxes.Count; s++) {
+                if (boxes[s].activeSelf && oldPositionsBoxes.Count == newPositionsBoxes.Count) {
+                    Vector3 interpolated = Vector3.Lerp(oldPositionsBoxes[s], newPositionsBoxes[s], dt);
 
+                    boxes[s].transform.localPosition = interpolated;
+
+                    Vector3 dir = oldPositionsBoxes[s] - newPositionsBoxes[s];
+                    boxes[s].transform.rotation = Quaternion.LookRotation(dir);
+                }
+            }
 
             timer += Time.deltaTime;
         }
@@ -152,15 +167,15 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.downloadHandler.text);
             robotAgents = JsonUtility.FromJson<RobotAgent>(www.downloadHandler.text);
 
-            oldPositions = new List<Vector3>(newPositions);
+            oldPositionsRobots = new List<Vector3>(newPositionsRobots);
 
-            newPositions.Clear();
+            newPositionsRobots.Clear();
 
             foreach(Vector3 v in robotAgents.positions)
             {
-                newPositions.Add(v);
+                newPositionsRobots.Add(v);
                 if (first)
-                    oldPositions.Add(v);
+                    oldPositionsRobots.Add(v);
             }
 
             yield return GetBoxesData();
@@ -177,13 +192,21 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.downloadHandler.text);
             boxAgents = JsonUtility.FromJson<BoxAgent>(www.downloadHandler.text);
 
-            if (!first) {
-                for (int i = 0; i < boxes.Length; i++)
-                    Destroy(boxes[i]);
+            oldPositionsBoxes = new List<Vector3>(newPositionsBoxes);
+
+            newPositionsBoxes.Clear();
+
+            foreach(Vector3 v in boxAgents.positions)
+            {
+                newPositionsBoxes.Add(v);
+                if (first)
+                    oldPositionsBoxes.Add(v);
             }
-            boxes = new GameObject[boxAgents.numBoxes];
-            for (int i = 0; i < boxAgents.numBoxes; i++) {
-                boxes[i] = Instantiate(boxPrefab, Vector3.zero, Quaternion.identity);
+
+            if (first) {
+                for (int i = 0; i < boxAgents.numBoxes; i++) {
+                    boxes.Add(Instantiate(boxPrefab, Vector3.zero, Quaternion.identity));
+                }
             }
 
             first = false;
@@ -214,8 +237,7 @@ public class AgentController : MonoBehaviour
         for (int i = 0; i < boxAgents.positions.Count; i++) {
             boxes[i].transform.position = boxAgents.positions[i];
             if (boxAgents.positions[i] == objAgent.position){
-                Debug.Log("Destroy");
-                Destroy(boxes[i]);
+                boxes[i].SetActive(false);
             }
         }
         Debug.Log("here");
