@@ -69,10 +69,11 @@ class Robot(Agent):
                 self.exeMoveFull(self.path, self.pathIter)
 
     def getBox(self):
-        for agent in self.model.grid.get_cell_list_contents(self.pos):
-            if isinstance(agent, Box):
-                self.isEmpty = False
-                self.currBox = agent
+        if self.pos != self.objPos:
+            for agent in self.model.grid.get_cell_list_contents(self.pos):
+                if isinstance(agent, Box):
+                    self.isEmpty = False
+                    self.currBox = agent
 
     def checkObj(self):
         for agent in self.model.grid.get_cell_list_contents(self.pos):

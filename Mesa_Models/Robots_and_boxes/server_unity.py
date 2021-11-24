@@ -74,7 +74,7 @@ def getBoxes():
 def getObj():
     global robotsModel
 
-    objPosition = {"x": 0, "y": 0, "z": 0}
+    objPosition = {"x": 0, "y": 0.05, "z": 0}
 
     for (a, x, z) in robotsModel.grid.coord_iter():
         for b in a:

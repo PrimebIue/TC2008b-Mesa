@@ -236,7 +236,7 @@ public class AgentController : MonoBehaviour
         }
         for (int i = 0; i < boxAgents.positions.Count; i++) {
             boxes[i].transform.position = boxAgents.positions[i];
-            if (boxAgents.positions[i] == objAgent.position){
+            if (boxAgents.positions[i].x == objAgent.position.x && boxAgents.positions[i].z == objAgent.position.z){
                 boxes[i].SetActive(false);
             }
         }
