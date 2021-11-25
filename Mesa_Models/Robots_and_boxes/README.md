@@ -60,7 +60,7 @@ Al final, usando la función de Update() en Unity usando la variable de timer de
 
 ## Reflexion
 
-Logramos llegar a una eficiencia buena gracias a nuestro pathfinding algorithm, los robots casi siempre regresan de la forma mas eficiente al origen lo cual reduce mucho el tiempo que toma. Aun asi un aspecto muy ineficiente es que busca las cajas de una forma aleatoria, una mejora en este aspecto puede ser que las cajas se comuniquen entre si las locaciones de las cajas que encuentren para que no tengan que buscarlas todas al mismo tiempo.
+Logramos llegar a una eficiencia buena gracias a nuestro pathfinding algorithm, los robots casi siempre regresan de la forma mas eficiente al origen lo cual reduce mucho el tiempo que toma. Aun asi un aspecto muy ineficiente es que busca las cajas de una forma aleatoria, una mejora en este aspecto puede ser que las cajas se comuniquen entre si las locaciones de las cajas que encuentren para que no tengan que buscarlas todas al mismo tiempo usando "Simultaneous Localization and Mapping".
 
 Otro problema que vimos es que asumimos desde el inicio que los robots saben el layout de todo el grid cuando esa no es probablemente la situacion, un cambio seria ir adaptando la forma de encontrar el destino segun las posiciones descubiertas por los robots.
 
@@ -70,4 +70,4 @@ Un problema que encontramos con el sistema actual es que si hay muchos elementos
 
 Otra mejora podria ser que los dispositivos se comuniquen entre si sus locaciones para que puedan evitar obstruirse mutuamente.
 
-Finalmente un problema es que presentamente el programa corre por mucho tiempo y no se le puede poner un limite de tiempo o alguna forma de hacer un tracking de progreso a lo largo de una determinación de tiempo, algo que tendria que mejorarse para el futuro.
+Finalmente un problema es que actualmente el programa corre por mucho tiempo y no se le puede poner un limite de tiempo o alguna forma de hacer un tracking de progreso a lo largo de una determinación de tiempo, algo que tendria que mejorarse para el futuro.
