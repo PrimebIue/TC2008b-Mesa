@@ -31,6 +31,7 @@ class RandomModel(Model):
                     if col in ["v", "^", ">", "<"]:
                         agent = Road(f"r{r*self.width+c}",
                                      self, dataDictionary[col])
+                        agent.pos = (c, self.height - r - 1)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                     elif col in ["S", "s"]:
@@ -62,15 +63,24 @@ class RandomModel(Model):
 
         if self.schedule.steps % 5 == 0:
             new_car = Car(self.carId + 1000, self)
-            rAgent = self.random.choice(self.schedule.agents)
+            self.carId += 1
+            rAgent = 0
+
+            def randomDest(rAgent):
+                if isinstance(rAgent, Destination):
+                    new_car.destination = rAgent
+                else:
+                    rAgent = self.random.choice(self.schedule.agents)
+                    randomDest(rAgent)
 
             def findPosition(rAgent):
-                print(rAgent)
                 if isinstance(rAgent, Road):
+                    new_car.pos = rAgent.pos
+                    new_car.recursion(new_car.pos)
                     self.grid.place_agent(new_car, rAgent.pos)
+                    self.schedule.add(new_car)
                 else:
-                    rAgent = new_car.random.choice(self.schedule.agents)
+                    rAgent = self.random.choice(self.schedule.agents)
                     findPosition(rAgent)
 
             findPosition(rAgent)
-

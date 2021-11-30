@@ -17,43 +17,65 @@ class Car(Agent):
             model: Model reference for the agent
         """
         super().__init__(unique_id, model)
+        self.pos = 0
+        self.destination = 0
+        self.pathIter = 0
+        self.path = []
+        self.visited = []
+
+    def recursion(self, currPos):
+        for agent in self.model.grid.iter_cell_list_contents(currPos):
+            if isinstance(agent, Road):
+                self.currDir = agent.direction
+
+        for agent in self.model.grid.iter_neighbors(currPos, True):
+            if agent == self.destination:
+                print("here")
+                return True
+            elif isinstance(agent, Road) and agent.pos not in self.visited:
+                self.visited.append(agent.pos)
+                x = currPos[0]
+                y = currPos[1]
+
+                directionDictionary = {"Right": {"x": [-1, -1, -1],
+                                                 "y": [0, 1, -1]},
+                                       "Left": {"x": [1, 1, 1],
+                                                "y": [0, 1, -1]},
+                                       "Up": {"x": [0, -1, +1],
+                                              "y": [-1, -1, -1]},
+                                       "Down": {"x": [0, -1, 1],
+                                                "y": [1, 1, 1]},
+                                       }
+
+                delta_y = directionDictionary[agent.direction]["y"]
+                delta_x = directionDictionary[agent.direction]["x"]
+
+                if x - agent.pos[0] in delta_x and y - agent.pos[1] in delta_y:
+                    self.path.append(agent.pos)
+                    print("re: ", self.path)
+                    if self.recursion(agent.pos):
+                        return
+                    else:
+                        self.path.pop()
+                    print("last: ", self.path)
+        return False
 
     def move(self):
         """
-        Determines if the agent can move in the direction that was chosen
+        Moves to the next position defined in path
         """
-        possible_steps = self.model.grid.get_neighborhood(
-            self.pos,
-            moore=True,
-            include_center=True)
+        print(self.path)
+        if self.pathIter < len(self.path):
+            self.model.grid.move_agent(self, self.path[self.pathIter])
+            print(self.pos, self.path[self.pathIter])
 
-        # Checks which grid cells are empty
-        freeSpaces = list(map(self.model.grid.is_cell_empty, possible_steps))
-
-        next_moves = [p for p, f in zip(
-            possible_steps, freeSpaces) if f]
-
-        next_move = self.random.choice(next_moves)
-        # Now move:
-        if self.random.random() < 0.1:
-            self.model.grid.move_agent(self, next_move)
-            self.steps_taken += 1
-
-        # If the cell is empty, moves the agent to that cell; otherwise, it stays at the same position
-        # if freeSpaces[self.direction]:
-        #     self.model.grid.move_agent(self, possible_steps[self.direction])
-        #     print(f"Se mueve de {self.pos} a {possible_steps[self.direction]}; direction {self.direction}")
-        # else:
-        #     print(f"No se puede mover de {self.pos} en esa direccion.")
+            self.pathIter += 1
 
     def step(self):
         """
         Determines the new direction it will take, and then moves
         """
-        # self.direction = self.random.randint(0,8)
-        # print(f"Agente: {self.unique_id} movimiento {self.direction}")
-        # self.move()
-        pass
+        self.move()
 
 
 class Traffic_Light(Agent):
@@ -104,6 +126,7 @@ class Road(Agent):
     def __init__(self, unique_id, model, direction="Left"):
         super().__init__(unique_id, model)
         self.direction = direction
+        self.pos = 0
 
     def step(self):
         pass
