@@ -12,6 +12,10 @@ class Robot(Agent):
         self.currBox = None
         self.objPos = 0
         self.pathIter = 0
+        self.uniqueId = uniqueId
+
+    def __lt__(self, other):
+        return self.uniqueId < other.uniqueId
 
     def moveEmpty(self):
         possibleSteps = self.model.grid.get_neighborhood(
@@ -65,10 +69,11 @@ class Robot(Agent):
                 self.exeMoveFull(self.path, self.pathIter)
 
     def getBox(self):
-        for agent in self.model.grid.get_cell_list_contents(self.pos):
-            if isinstance(agent, Box):
-                self.isEmpty = False
-                self.currBox = agent
+        if self.pos != self.objPos:
+            for agent in self.model.grid.get_cell_list_contents(self.pos):
+                if isinstance(agent, Box):
+                    self.isEmpty = False
+                    self.currBox = agent
 
     def checkObj(self):
         for agent in self.model.grid.get_cell_list_contents(self.pos):
@@ -95,12 +100,14 @@ class Box(Agent):
 
     def __init__(self, uniqueId, model):
         super().__init__(uniqueId, model)
+        self.uniqueId = uniqueId
         self.objPos = 0
 
+    def __lt__(self, other):
+        return self.uniqueId < other.uniqueId
+
     def advance(self):
-        if self.pos == self.objPos:
-            self.model.schedule.remove(self)
-            self.model.grid.remove_agent(self)
+        pass
 
 
 class Objective(Agent):
