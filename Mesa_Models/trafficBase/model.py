@@ -48,6 +48,7 @@ class RandomModel(Model):
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
+                        self.schedule.add(agent)
 
         self.num_agents = N
         self.running = True
@@ -77,10 +78,11 @@ class RandomModel(Model):
                 if isinstance(rAgent, Road):
                     new_car.pos = rAgent.pos
                     new_car.recursion(new_car.pos)
-                    self.grid.place_agent(new_car, rAgent.pos)
+                    self.grid.place_agent(new_car, new_car.pos)
                     self.schedule.add(new_car)
                 else:
                     rAgent = self.random.choice(self.schedule.agents)
                     findPosition(rAgent)
 
+            randomDest(rAgent)
             findPosition(rAgent)
