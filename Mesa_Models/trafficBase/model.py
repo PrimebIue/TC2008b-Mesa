@@ -72,7 +72,7 @@ class RandomModel(Model):
                     if isinstance(agent, Traffic_Light):
                         agent.state = not agent.state
 
-        if self.schedule.steps % 2 == 0:
+        if self.schedule.steps % 1 == 0:
             new_car = Car(self.carId + 1000, self)
             self.carId += 1
             rAgent = 0
