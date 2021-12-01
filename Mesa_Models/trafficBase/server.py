@@ -21,7 +21,7 @@ def agent_portrayal(agent):
 
     if (isinstance(agent, Destination)):
         portrayal["Color"] = "lightgreen"
-        portrayal["Layer"] = 0
+        portrayal["Layer"] = 3
 
     if (isinstance(agent, Traffic_Light)):
         portrayal["Color"] = "red" if not agent.state else "green"

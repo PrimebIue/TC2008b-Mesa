@@ -17,6 +17,8 @@ class RandomModel(Model):
 
         dataDictionary = json.load(open("mapDictionary.txt"))
         self.carId = 0
+        self.destinationList = []
+        self.roadList = []
 
         with open('base.txt') as baseFile:
             lines = baseFile.readlines()
@@ -34,12 +36,14 @@ class RandomModel(Model):
                         agent.pos = (c, self.height - r - 1)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
+                        self.roadList.append(agent)
                     elif col in ["S", "s"]:
                         agent = Traffic_Light(
                             f"tl{r*self.width+c}",
                             self,
                             False if col == "S" else True,
                             int(dataDictionary[col]))
+                        agent.pos = (c, self.height - r - 1)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                     elif col == "#":
@@ -47,8 +51,14 @@ class RandomModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
+                        agent.pos = (c, self.height - r - 1)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
+                        self.destinationList.append(agent)
+        # Initialize traffic light directions
+        for agent in self.schedule.agents:
+            if isinstance(agent, Traffic_Light):
+                agent.getDirection()
 
         self.num_agents = N
         self.running = True
@@ -62,7 +72,7 @@ class RandomModel(Model):
                     if isinstance(agent, Traffic_Light):
                         agent.state = not agent.state
 
-        if self.schedule.steps % 5 == 0:
+        if self.schedule.steps % 2 == 0:
             new_car = Car(self.carId + 1000, self)
             self.carId += 1
             rAgent = 0
@@ -71,17 +81,17 @@ class RandomModel(Model):
                 if isinstance(rAgent, Destination):
                     new_car.destination = rAgent
                 else:
-                    rAgent = self.random.choice(self.schedule.agents)
+                    rAgent = self.random.choice(self.destinationList)
                     randomDest(rAgent)
 
             def findPosition(rAgent):
                 if isinstance(rAgent, Road):
                     new_car.pos = rAgent.pos
-                    new_car.recursion(new_car.pos)
+                    new_car.pathFinding()
                     self.grid.place_agent(new_car, new_car.pos)
                     self.schedule.add(new_car)
                 else:
-                    rAgent = self.random.choice(self.schedule.agents)
+                    rAgent = self.random.choice(self.roadList)
                     findPosition(rAgent)
 
             randomDest(rAgent)
