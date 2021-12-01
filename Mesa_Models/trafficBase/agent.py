@@ -21,6 +21,9 @@ class Car(Agent):
         self.path = []
         self.visited = []
 
+    def __lt__(self, other):
+        return self.unique_id < other.unique_id
+
     def pathFinding(self):
 
         print(self.destination.pos)
@@ -142,6 +145,9 @@ class Traffic_Light(Agent):
         self.orientation = 0
         self.direction = 0
 
+    def __lt__(self, other):
+        return self.unique_id < other.unique_id
+
     def getDirection(self):
         x = [1, -1, 0, 0]
         y = [0, 0, 1, -1]
@@ -193,6 +199,9 @@ class Destination(Agent):
         super().__init__(unique_id, model)
         self.pos = 0
 
+    def __lt__(self, other):
+        return self.unique_id < other.unique_id
+
     def step(self):
         pass
 
@@ -204,6 +213,9 @@ class Obstacle(Agent):
 
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
+
+    def __lt__(self, other):
+        return self.unique_id < other.unique_id
 
     def step(self):
         pass
@@ -218,6 +230,9 @@ class Road(Agent):
         super().__init__(unique_id, model)
         self.direction = direction
         self.pos = 0
+
+    def __lt__(self, other):
+        return self.unique_id < other.unique_id
 
     def step(self):
         pass

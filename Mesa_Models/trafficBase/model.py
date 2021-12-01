@@ -5,7 +5,7 @@ from agent import Road, Traffic_Light, Obstacle, Destination, Car
 import json
 
 
-class RandomModel(Model):
+class TrafficModel(Model):
     """
     Creates a new model with random agents.
     Args:
@@ -61,18 +61,7 @@ class RandomModel(Model):
                 agent.getDirection()
 
         self.num_agents = N
-        self.running = True
-
-    def step(self):
-        '''Advance the model by one step.'''
-        self.schedule.step()
-        if self.schedule.steps % 10 == 0:
-            for agents, x, y in self.grid.coord_iter():
-                for agent in agents:
-                    if isinstance(agent, Traffic_Light):
-                        agent.state = not agent.state
-
-        if self.schedule.steps % 1 == 0:
+        for _ in range(N):
             new_car = Car(self.carId + 1000, self)
             self.carId += 1
             rAgent = 0
@@ -96,3 +85,13 @@ class RandomModel(Model):
 
             randomDest(rAgent)
             findPosition(rAgent)
+        self.running = True
+
+    def step(self):
+        '''Advance the model by one step.'''
+        self.schedule.step()
+        if self.schedule.steps % 10 == 0:
+            for agents, x, y in self.grid.coord_iter():
+                for agent in agents:
+                    if isinstance(agent, Traffic_Light):
+                        agent.state = not agent.state

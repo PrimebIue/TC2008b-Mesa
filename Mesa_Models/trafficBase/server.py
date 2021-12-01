@@ -1,5 +1,5 @@
 from agent import Road, Destination, Traffic_Light, Obstacle, Car
-from model import RandomModel
+from model import TrafficModel
 from mesa.visualization.modules import CanvasGrid, BarChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 
@@ -54,7 +54,7 @@ model_params = {"N": 5}
 
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
 
-server = ModularServer(RandomModel, [grid], "Traffic Base", model_params)
+server = ModularServer(TrafficModel, [grid], "Traffic Base", model_params)
 
 server.port = 8521  # The default
 server.launch()

@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 
 public class CarData
 {
-    public int uniqueID;
+    //public int uniqueID;
     public Vector3 position;
 }
 
@@ -23,9 +23,10 @@ public class AgentData
 public class AgentController : MonoBehaviour
 {
     // private string url = "https://boids.us-south.cf.appdomain.cloud/";
-    string serverUrl = "http://localhost:8585";
-    string getAgentsEndpoint = "/getAgents";
-    string getObstaclesEndpoint = "/getObstacles";
+    string serverUrl = "http://172.19.212.3:8000/";
+    string getCarsEndpoint = "/getCars";
+    string getTlEndpoint = "/getTL";
+    string getObstaclesEndpoint = "/getObstacle";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentData carsData, obstacleData;
@@ -34,6 +35,7 @@ public class AgentController : MonoBehaviour
     List<Vector3> newPositions;
     // Pause the simulation while we get the update from the server
     bool hold = false;
+    bool first = true;
 
     public GameObject carPrefab, obstaclePrefab, floor;
     public int NAgents, width, height;
@@ -48,23 +50,24 @@ public class AgentController : MonoBehaviour
 
         agents = new GameObject[NAgents];
 
-        floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
+        //floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
+        //floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
-        timer = timeToUpdate;
-
-        for(int i = 0; i < NAgents; i++)
+        for (int i = 0; i < NAgents; i++) {
             agents[i] = Instantiate(carPrefab, Vector3.zero, Quaternion.identity);
+        }
+
             
         StartCoroutine(SendConfiguration());
     }
 
-    private void Update() 
+    void Update() 
     {
         float t = timer/timeToUpdate;
         // Smooth out the transition at start and end
         dt = t * t * ( 3f - 2f*t);
 
+        Debug.Log("timer: " + timer);
         if(timer >= timeToUpdate)
         {
             timer = 0;
@@ -74,16 +77,19 @@ public class AgentController : MonoBehaviour
 
         if (!hold)
         {
+            Debug.Log("oldPositionsLen: " + oldPositions.Count);
+            Debug.Log("newPositionsLen: " + newPositions.Count);
             for (int s = 0; s < agents.Length; s++)
             {
+                Debug.Log("s: " + s);
                 Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
                 agents[s].transform.localPosition = interpolated;
                 
                 Vector3 dir = oldPositions[s] - newPositions[s];
                 agents[s].transform.rotation = Quaternion.LookRotation(dir);
-                
             }
             // Move time from the last frame
+            Debug.Log("jere");
             timer += Time.deltaTime;
         }
     }
@@ -97,7 +103,7 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            StartCoroutine(GetCarsData());
+            yield return GetCarsData();
         }
     }
 
@@ -129,7 +135,7 @@ public class AgentController : MonoBehaviour
 
     IEnumerator GetCarsData() 
     {
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getAgentsEndpoint);
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getCarsEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
@@ -143,9 +149,12 @@ public class AgentController : MonoBehaviour
 
             newPositions.Clear();
 
-            foreach(Vector3 v in carsData.positions)
+            foreach(Vector3 v in carsData.positions){
                 newPositions.Add(v);
-
+                if (first)
+                    oldPositions.Add(v);
+            }
+            first = false; 
             hold = false;
         }
     }
