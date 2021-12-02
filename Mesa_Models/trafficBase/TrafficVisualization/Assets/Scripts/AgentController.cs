@@ -15,6 +15,13 @@ public class CarData
     public Vector3 position;
 }
 
+public class TLData
+{
+    //public int uniqueID;
+    public List<Vector3> positions;
+    public List<bool> states;
+}
+
 public class AgentData
 {
     public List<Vector3> positions;
@@ -23,31 +30,35 @@ public class AgentData
 public class AgentController : MonoBehaviour
 {
     // private string url = "https://boids.us-south.cf.appdomain.cloud/";
-    string serverUrl = "http://172.19.212.3:8000/";
+    public string serverUrl;
     string getCarsEndpoint = "/getCars";
     string getTlEndpoint = "/getTL";
     string getObstaclesEndpoint = "/getObstacle";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentData carsData, obstacleData;
+    TLData tlData;
     GameObject[] agents;
+    List<GameObject> tlAgents;
     List<Vector3> oldPositions;
     List<Vector3> newPositions;
     // Pause the simulation while we get the update from the server
     bool hold = false;
     bool first = true;
 
-    public GameObject carPrefab, obstaclePrefab, floor;
+    public GameObject carPrefab, obstaclePrefab, floor, tlPrefab;
     public int NAgents, width, height;
     public float timeToUpdate = 5.0f, timer, dt;
 
     void Start()
     {
+        // agent[i].GetComponent<Renderer>().material.color = Color.red; 
         carsData = new AgentData();
         obstacleData = new AgentData();
+        tlData = new TLData();
         oldPositions = new List<Vector3>();
         newPositions = new List<Vector3>();
-
+        tlAgents = new List<GameObject>();
         agents = new GameObject[NAgents];
 
         //floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
@@ -104,6 +115,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             yield return GetCarsData();
+            yield return GetTLData();
         }
     }
 
@@ -130,6 +142,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetCarsData());
             StartCoroutine(GetObstacleData());
+            StartCoroutine(GetTLData());
         }
     }
 
@@ -154,7 +167,6 @@ public class AgentController : MonoBehaviour
                 if (first)
                     oldPositions.Add(v);
             }
-            first = false; 
             hold = false;
         }
     }
@@ -176,6 +188,37 @@ public class AgentController : MonoBehaviour
             {
                 Instantiate(obstaclePrefab, position, Quaternion.identity);
             }
+        }
+    }
+
+    IEnumerator GetTLData()
+    {
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTlEndpoint);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result. Success)
+            Debug.Log(www.error);
+        else
+        {
+            tlData = JsonUtility.FromJson<TLData>(www.downloadHandler.text);
+
+            if (first) {
+                foreach(Vector3 position in tlData.positions)
+                {
+                    tlAgents.Add(Instantiate(tlPrefab , position, Quaternion.identity));
+                }
+            }
+
+            for (int i = 0; i < tlData.positions.Count; i++) {
+                if (!tlData.states[i])
+                    tlAgents[i].GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+                else if (tlData.states[i])
+                    tlAgents[i].GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+            }
+
+
+            
+            first = false; 
         }
     }
 }

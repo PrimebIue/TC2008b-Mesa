@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -328,13 +328,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983bc179e80f15347a79dd7b044746e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefab: {fileID: 167026207096243423, guid: 374b3e745e406c94da343c665f086584, type: 3}
+  serverUrl: http://10.49.86.110:8000/
+  carPrefab: {fileID: 8437504966199242059, guid: ed439e57ed4cdd2daad1d0ec7e21fcd2, type: 3}
   obstaclePrefab: {fileID: 961990229689801968, guid: 0870e23a47df89e468e8af19c065fce0, type: 3}
   floor: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
-  NAgents: 5
+  tlPrefab: {fileID: 8102729382312259521, guid: ec03db3fda9c46458bf4fb4f61cc11bd, type: 3}
+  NAgents: 80
   width: 0
   height: 0
-  timeToUpdate: 1
+  timeToUpdate: 0.2
   timer: 0
   dt: 0
 --- !u!4 &466028752
@@ -383,7 +385,6 @@ MonoBehaviour:
   layout: {fileID: 4900000, guid: 78ad530ecd39ea0eb99db7562637e3bc, type: 3}
   roadPrefab: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
   buildingPrefab: {fileID: 33555395739272859, guid: 10a584233fb38a918af771ddce837268, type: 3}
-  semaphorePrefab: {fileID: 8102729382312259521, guid: ec03db3fda9c46458bf4fb4f61cc11bd, type: 3}
   tileSize: 1
 --- !u!4 &1457529884
 Transform:

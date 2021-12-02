@@ -54,6 +54,7 @@ def getTL():
     global TrafficModel
 
     TLPositions = []
+    TLStates = []
     TL = []
 
     for (a, x, z) in TrafficModel.grid.coord_iter():
@@ -64,8 +65,9 @@ def getTL():
     TL.sort()
     for L in TL:
         TLPositions.append({"x": L.pos[0], "y": 0, "z": L.pos[1]})
+        TLStates.append(L.state)
 
-    return jsonify({'positions': TLPositions})
+    return jsonify({'positions': TLPositions, 'states': TLStates})
 
 
 @app.route('/getDestination', methods=['GET'])
