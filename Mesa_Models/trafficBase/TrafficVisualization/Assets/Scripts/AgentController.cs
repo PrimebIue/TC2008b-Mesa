@@ -86,21 +86,21 @@ public class AgentController : MonoBehaviour
             StartCoroutine(UpdateSimulation());
         }
 
-        if (!hold)
+        else if (!hold)
         {
             Debug.Log("oldPositionsLen: " + oldPositions.Count);
             Debug.Log("newPositionsLen: " + newPositions.Count);
-            for (int s = 0; s < agents.Length; s++)
-            {
-                Debug.Log("s: " + s);
-                Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
-                agents[s].transform.localPosition = interpolated;
-                
-                Vector3 dir = oldPositions[s] - newPositions[s];
-                agents[s].transform.rotation = Quaternion.LookRotation(dir);
+            if (oldPositions.Count >= agents.Length) {
+                for (int s = 0; s < agents.Length; s++)
+                {
+                    Debug.Log("s: " + s);
+                    Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
+                    agents[s].transform.localPosition = interpolated;
+                    
+                    Vector3 dir = oldPositions[s] - newPositions[s];
+                    agents[s].transform.rotation = Quaternion.LookRotation(dir);
+                }
             }
-            // Move time from the last frame
-            Debug.Log("jere");
             timer += Time.deltaTime;
         }
     }
