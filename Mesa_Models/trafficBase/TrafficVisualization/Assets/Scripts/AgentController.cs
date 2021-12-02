@@ -115,7 +115,6 @@ public class AgentController : MonoBehaviour
         else 
         {
             yield return GetCarsData();
-            yield return GetTLData();
         }
     }
 
@@ -140,9 +139,9 @@ public class AgentController : MonoBehaviour
         {
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
-            StartCoroutine(GetCarsData());
-            StartCoroutine(GetObstacleData());
-            StartCoroutine(GetTLData());
+            yield return GetCarsData();
+            yield return GetObstacleData();
+            yield return GetTLData();
         }
     }
 
@@ -167,8 +166,8 @@ public class AgentController : MonoBehaviour
                 if (first)
                     oldPositions.Add(v);
             }
-            hold = false;
         }
+        yield return GetTLData();
     }
 
     IEnumerator GetObstacleData() 
@@ -219,6 +218,8 @@ public class AgentController : MonoBehaviour
 
             
             first = false; 
+            hold = false;
+
         }
     }
 }

@@ -329,14 +329,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverUrl: http://10.49.86.110:8000/
-  carPrefab: {fileID: 8437504966199242059, guid: ed439e57ed4cdd2daad1d0ec7e21fcd2, type: 3}
+  carPrefab: {fileID: 5446334663971260674, guid: 8175786f78a3d3a4a88e8ebd7393ea2f, type: 3}
   obstaclePrefab: {fileID: 961990229689801968, guid: 0870e23a47df89e468e8af19c065fce0, type: 3}
   floor: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
   tlPrefab: {fileID: 8102729382312259521, guid: ec03db3fda9c46458bf4fb4f61cc11bd, type: 3}
-  NAgents: 80
+  NAgents: 40
   width: 0
   height: 0
-  timeToUpdate: 0.2
+  timeToUpdate: 2
   timer: 0
   dt: 0
 --- !u!4 &466028752
