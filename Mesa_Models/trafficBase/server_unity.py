@@ -1,7 +1,11 @@
-from model import TrafficModel as RandomModel
-from flask import Flask, request, jsonify
+from cloudant import Cloudant
+from flask import Flask, render_template, request, jsonify
+from model import RandomModel
 from agent import Car, Traffic_Light, Destination, Obstacle, Road
+import atexit
 import os
+import json
+
 
 number_agents = 4
 width = 10
